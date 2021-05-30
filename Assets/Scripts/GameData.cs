@@ -1,4 +1,5 @@
 using MLAPI;
+using MLAPI.Messaging;
 using MLAPI.NetworkVariable;
 using MLAPI.NetworkVariable.Collections;
 using System.Collections;
@@ -34,11 +35,11 @@ public class GameData : NetworkBehaviour
     //used by server only
     private int lastPlayerID = 0;
 
+    //server only but can't rpc since gameobject doesn't support serialization
     public void AddPlayer(GameObject newPlayer)
     {
         if (IsServer)
         {
-            print("gamedata server adding player");
             Players.Add(newPlayer);
 
             PlayerData data = newPlayer.GetComponent<PlayerData>();
@@ -59,6 +60,8 @@ public class GameData : NetworkBehaviour
         InkDisplay.UpdateColor();
     }
 
+
+    //server only but can't use rpc since returning value
     public Color32 AddTeam()
     {
         if (IsServer)
@@ -67,10 +70,8 @@ public class GameData : NetworkBehaviour
             newTeam = Color.Lerp(newTeam, Color.white, 0.5f);
             newTeam.a = 255;
 
-            print("gamedata server adding team");
             Teams.Add(newTeam);
-            print("gamedata server updating score list");
-            calculator.UpdateTeamList();
+            calculator.UpdateTeamListServerRpc();
 
             return newTeam;
         } else
@@ -81,40 +82,40 @@ public class GameData : NetworkBehaviour
 
     }
 
-    public void StartGame()
+    [ServerRpc]
+    public void StartGameServerRpc()
     {
-        if (IsServer)
+        GameStarted.Value = true;
+        GameEnded.Value = false;
+
+        //reset data
+        Scores.Clear();
+
+        //reset player stats
+        foreach (GameObject player in Players)
         {
-            GameStarted.Value = true;
-            GameEnded.Value = false;
+            PlayerData data = player.GetComponent<PlayerData>();
 
-            //reset data
-            Scores.Clear();
-
-            //reset player stats
-            foreach (GameObject player in Players)
-            {
-                PlayerData data = player.GetComponent<PlayerData>();
-
-                data.PlayerID.Value = lastPlayerID;
-                data.InkRegen.Value = BaseInkRegenPerSecond;
-                data.MaxInk.Value = (int)BaseInk;
-                data.Ink.Value = BaseInk;
-            }
-
-            //destroying all drawings
-            GameObject[] drawings = GameObject.FindGameObjectsWithTag("Drawing");
-            foreach (GameObject drawing in drawings)
-            {
-                Destroy(drawing);
-            }
-
-
-            Invoke("StartGameForReal", 3.3f);
+            data.PlayerID.Value = lastPlayerID;
+            data.InkRegen.Value = BaseInkRegenPerSecond;
+            data.MaxInk.Value = (int)BaseInk;
+            data.Ink.Value = BaseInk;
         }
+
+        //destroying all drawings
+        GameObject[] drawings = GameObject.FindGameObjectsWithTag("Drawing");
+        foreach (GameObject drawing in drawings)
+        {
+            Destroy(drawing);
+        }
+
+
+        Invoke("StartGameForRealServerRpc", 3.3f);
+     
     }
 
-    private void StartGameForReal()
+    [ServerRpc]
+    private void StartGameForRealServerRpc()
     {
 
         //generate zones

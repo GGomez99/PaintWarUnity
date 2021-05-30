@@ -82,6 +82,6 @@ public class GUINetwork : MonoBehaviour
         GUILayout.Label("Mode: " + mode, style);
 
         if (NetworkManager.Singleton.IsHost && !CurrentGame.GameStarted.Value)
-            if (GUILayout.Button("Start Game")) CurrentGame.StartGame();
+            if (GUILayout.Button("Start Game")) CurrentGame.StartGameServerRpc();
     }
 }

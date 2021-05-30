@@ -1,4 +1,5 @@
 using MLAPI;
+using MLAPI.Messaging;
 using MLAPI.NetworkVariable.Collections;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,15 +25,16 @@ public class ScoreCalculator : NetworkBehaviour
             InvokeRepeating("getScore", 1f, 5f);
         } else if (IsClient)
         {
+            CurrentGameData.Scores.OnDictionaryChanged += DebugScore;
             InvokeRepeating("DisplayScore", 1f, 2f);
         }
     }
 
-    public void UpdateTeamList()
+    [ServerRpc]
+    public void UpdateTeamListServerRpc()
     {
         if (IsServer)
         {
-            print("server scorecalc update score list");
             foreach (Color32 teamColor in CurrentGameData.Teams)
             {
                 bool notInScores = true;
@@ -43,7 +45,6 @@ public class ScoreCalculator : NetworkBehaviour
                         notInScores = false;    
                 }
 
-                print("Is team " + teamColor + "not in scores ? " + notInScores);
                 if (notInScores)
                 {
                     CurrentGameData.Scores.Add(ColorUtility.ToHtmlStringRGB(teamColor), 0);
@@ -55,6 +56,13 @@ public class ScoreCalculator : NetworkBehaviour
         }
     }
 
+    void DebugScore(NetworkDictionaryEvent<string, int> changeEvent)
+    {
+        print("key changed : " + changeEvent.Key);
+        print("value changed : " + changeEvent.Value);
+
+    }
+
     void DisplayScore()
     {
         if (DoDisplay) 
@@ -62,7 +70,9 @@ public class ScoreCalculator : NetworkBehaviour
             foreach (string teamColor in CurrentGameData.Scores.Keys)
             {
                 print(teamColor + " : " + CurrentGameData.Scores[teamColor]);
-                print(CurrentGameData.Scores.LastSyncedTime);
+                int scoreRecov;
+                print(CurrentGameData.Scores.TryGetValue(teamColor, out scoreRecov));
+                print("recovered " + scoreRecov);
             }
         }
     }
@@ -80,11 +90,14 @@ public class ScoreCalculator : NetworkBehaviour
 
             RenderTexture.active = null;
 
+            //generate dict for new score
+            Dictionary<string, int> newScores = new Dictionary<string, int>();
             foreach (Color32 teamColor in CurrentGameData.Teams)
             {
-                CurrentGameData.Scores[ColorUtility.ToHtmlStringRGB(teamColor)] = 0;
+                newScores.Add(ColorUtility.ToHtmlStringRGB(teamColor), 0);
             }
 
+            //count pixels for each team
             //print(Time.realtimeSinceStartup + " start counting pixels");
             for (int x = 0; x < DrawZone.width; x = x + SkipPixels)
             {
@@ -93,9 +106,16 @@ public class ScoreCalculator : NetworkBehaviour
                     Color32 pixelColor = CurrentZone.GetPixel(x, y);
                     if (CurrentGameData.Teams.Contains(pixelColor))
                     {
-                        CurrentGameData.Scores[ColorUtility.ToHtmlStringRGB(pixelColor)] += SkipPixels;
+                        newScores[ColorUtility.ToHtmlStringRGB(pixelColor)] += SkipPixels;
                     }
                 }
+            }
+
+            //update networkDict
+            foreach (Color32 teamInScore in CurrentGameData.Teams)
+            {
+                string teamKey = ColorUtility.ToHtmlStringRGB(teamInScore);
+                CurrentGameData.Scores[teamKey] = newScores[teamKey];
             }
 
             DisplayScore();

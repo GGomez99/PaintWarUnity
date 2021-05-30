@@ -160,8 +160,9 @@ public class DrawingBehaviour : NetworkBehaviour
             SetColor(MainColor.Value, MainColor.Value);
         }
 
-        //check if drawing is done
-        DoFilling.Value = DoFilling.Value && FillingValue.Value < 1f;
+        //check if drawing is done (only server can check)
+        if (IsServer)
+            DoFilling.Value = DoFilling.Value && FillingValue.Value < 1f;
 
         //do stuff if not already done after finished drawing
         if (!DoFilling.Value && FillingValue.Value > 0f && !Done)

@@ -132,11 +132,9 @@ public class RectDrawer : NetworkBehaviour
         //generate team for player
         if (IsServer) {
             //add player to list (generates player ID too)
-            print("server rectdrawer requesting adding player");
             CurrentGameData.AddPlayer(gameObject);
 
             //generate team color
-            print("server rect drawer requesting create team");
             Color32 newTeam = CurrentGameData.AddTeam();
             DrawerPlayer.TeamColor.Value = newTeam;
         }

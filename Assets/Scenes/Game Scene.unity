@@ -6888,7 +6888,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DrawZone: {fileID: 8400000, guid: 8ac52e86809cdc2408d2acd8384fe18d, type: 2}
   CurrentGameData: {fileID: 967962117}
-  DoDisplay: 1
+  DoDisplay: 0
   SkipPixels: 10
 --- !u!114 &967962119
 MonoBehaviour:
