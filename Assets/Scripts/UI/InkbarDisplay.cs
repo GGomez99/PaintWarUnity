@@ -6,11 +6,15 @@ using UnityEngine.UI;
 public class InkbarDisplay : MonoBehaviour
 {
 
-    public Slider inkSlider;
+    public Slider InkSlider;
+    public Slider CostSlider;
+    public Text InkText;
     public PlayerData LocalPlayer;
+    public RectDrawer LocalDrawer;
     public Image SliderFill;
     public Image IconFill;
     public Image SliderBG;
+    public Image SliderCost;
 
     // Start is called before the first frame update
     public void UpdateColor()
@@ -29,8 +33,30 @@ public class InkbarDisplay : MonoBehaviour
     {
         if (LocalPlayer != null)
         {
-            inkSlider.maxValue = LocalPlayer.MaxInk.Value;
-            inkSlider.value = LocalPlayer.Ink.Value;
+            InkSlider.maxValue = LocalPlayer.MaxInk.Value;
+            InkSlider.value = LocalPlayer.Ink.Value;
+            InkText.text = InkSlider.value + "/" + InkSlider.maxValue;
+        }
+        if (LocalDrawer != null)
+        {
+            DrawingBehaviour drawing = LocalDrawer.CurrentDisplayDrawing;
+            if (drawing == null)
+                CostSlider.value = 0;
+            else
+            {
+                CostSlider.maxValue = InkSlider.value;
+                Vector3 drawScale = LocalDrawer.CurrentDisplayDrawing.Draw.localScale;
+                float area = drawScale.x * drawScale.y;
+                int areaCost = (int) (area / LocalDrawer.CurrentGameData.InkToAreaPaintRatio);
+                CostSlider.value = areaCost;
+                if (CostSlider.value < areaCost)
+                {
+                    SliderCost.color = new Color32(255, 180, 180, 125);
+                } else
+                {
+                    SliderCost.color = Color.white;
+                }
+            }
         }
     }
 }

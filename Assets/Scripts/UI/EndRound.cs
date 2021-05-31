@@ -23,7 +23,7 @@ public class EndRound : MonoBehaviour
         {
             TextWin.SetActive(true);
             roundEnded = true;
-            WinnerText.color = CurrentGame.Winner.Value;
+            WinnerText.color = Color.Lerp(CurrentGame.Winner.Value, Color.black, 0.15f);
             int teamNumber = CurrentGame.Teams.IndexOf(CurrentGame.Winner.Value) + 1;
             WinnerText.text = "Team " + teamNumber.ToString();
             EndRoundAnim.Play();

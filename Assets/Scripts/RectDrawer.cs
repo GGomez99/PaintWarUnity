@@ -4,6 +4,7 @@ using MLAPI.Messaging;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class RectDrawer : NetworkBehaviour
 {
@@ -11,6 +12,7 @@ public class RectDrawer : NetworkBehaviour
     public GameObject CanvasDrawings;
     public PlayerData DrawerPlayer;
     public GameData CurrentGameData;
+    public DrawingBehaviour CurrentDisplayDrawing;
     private int CurrentDrawingID = -1;
 
     //used by server
@@ -162,20 +164,17 @@ public class RectDrawer : NetworkBehaviour
 
     public void GenerateDrawing()
     {
-        if (IsLocalPlayer && CurrentDrawingID == -1)
-        {
-            Vector3 pz = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            pz.z = 0;
+        Vector3 pz = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        pz.z = 0;
 
-            if (IsServer)
-            {
-                CurrentDrawingID = CreateDrawing(pz, pz, DrawerPlayer.TeamColor.Value);
-            }
-            else if (IsClient)
-            {
-                CurrentDrawingID = -2;
-                CreateDrawingServerRpc(pz, DrawerPlayer.TeamColor.Value, OwnerClientId);
-            }
+        if (IsServer)
+        {
+            CurrentDrawingID = CreateDrawing(pz, pz, DrawerPlayer.TeamColor.Value);
+        }
+        else if (IsClient)
+        {
+            CurrentDrawingID = -2;
+            CreateDrawingServerRpc(pz, DrawerPlayer.TeamColor.Value, OwnerClientId);
         }
     }
 
@@ -184,7 +183,28 @@ public class RectDrawer : NetworkBehaviour
     {
         if (IsLocalPlayer && !CurrentGameData.GameEnded.Value)
         {
-            if (Input.GetMouseButton(0) && CurrentDrawingID > -1)
+            if (Input.GetMouseButtonDown(0) && CurrentDrawingID == -1)
+            {
+                int layerMask = 1 << LayerMask.NameToLayer("DrawingHitboxes");
+                Collider2D colliderHit = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition), layerMask);
+                if (colliderHit != null)
+                {
+                    //check if clicking on UI
+                    if (!EventSystem.current.IsPointerOverGameObject())
+                    {
+
+                        DrawingBehaviour drawingHit = colliderHit.gameObject.GetComponent<DrawingCollision>().CurrentDrawing;
+
+                        if (drawingHit.MainColor.Value.Equals(DrawerPlayer.TeamColor.Value))
+                        {
+                            GenerateDrawing();
+                        }
+                    }
+
+                }
+            } 
+            
+            else if (Input.GetMouseButton(0) && CurrentDrawingID > -1)
             {
                 //update draw marker
                 Vector3 pz = Camera.main.ScreenToWorldPoint(Input.mousePosition);

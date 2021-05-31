@@ -18,7 +18,7 @@ public class DrawingBehaviour : NetworkBehaviour
     public NetworkVariableFloat SpeedFill = new NetworkVariableFloat(6f);
     public float MarkerTransparency;
     public DrawingCollision DrawingCollider;
-    public RectDrawer LocalPlayerDrawer;
+    public RectDrawer PlayerOwnerDrawer;
     public PlayerData PlayerOwner;
     public SoundDrawingBehaviour SoundBehaviour;
     public Animation DoneAnim;
@@ -34,6 +34,7 @@ public class DrawingBehaviour : NetworkBehaviour
     private bool Done = false;
     private SpriteRenderer FillRenderer;
     private SpriteRenderer MarkerRenderer;
+    private float LocalFillingValue = 0f;
 
     public void AddNetworkVariableListeners()
     {
@@ -55,7 +56,7 @@ public class DrawingBehaviour : NetworkBehaviour
         Vector3 scale = P1.Value - P2;
         scale.x = Mathf.Abs(scale.x);
         scale.y = Mathf.Abs(scale.y);
-        scale.z = Mathf.Abs(scale.z);
+        scale.z = Draw.localScale.z;
 
         Vector3 center = (P1.Value + P2) * 0.5f;
 
@@ -86,27 +87,33 @@ public class DrawingBehaviour : NetworkBehaviour
         Draw.localScale = scale;
     }
 
-    public void UpdateFill()
+    public void UpdateFill(float newValue)
     {
+        //updating Z pos to put fill on front 
+        if (FillImage.position.z == 0)
+        {
+            FillImage.position = new Vector3(FillImage.position.x, FillImage.position.y, -CurrentGameData.LastDrawingLayerOrder);
+            CurrentGameData.LastDrawingLayerOrder++;
+        }
 
         Vector3 scaleFill = FillImage.localScale;
         Vector3 posFill = FillImage.localPosition;
         if (FillingDirection.Equals(Slider.Direction.BottomToTop) || FillingDirection.Equals(Slider.Direction.TopToBottom))
         {
 
-            scaleFill.y = MarkerImage.localScale.y * FillingValue.Value;
+            scaleFill.y = MarkerImage.localScale.y * newValue;
             scaleFill.x = MarkerImage.localScale.x;
 
-            posFill.y = (FillingDirection.Equals(Slider.Direction.BottomToTop) ? -1 : 1) * (1 - FillingValue.Value) / 2;
+            posFill.y = (FillingDirection.Equals(Slider.Direction.BottomToTop) ? -1 : 1) * (1 - newValue) / 2;
             posFill.x = 0;
 
         }
         else
         {
-            scaleFill.x = MarkerImage.localScale.x * FillingValue.Value;
+            scaleFill.x = MarkerImage.localScale.x * newValue;
             scaleFill.y = MarkerImage.localScale.y;
 
-            posFill.x = (FillingDirection.Equals(Slider.Direction.LeftToRight) ? -1 : 1) * (1 - FillingValue.Value) / 2;
+            posFill.x = (FillingDirection.Equals(Slider.Direction.LeftToRight) ? -1 : 1) * (1 - newValue) / 2;
             posFill.y = 0;
         }
         FillImage.localScale = scaleFill;
@@ -118,13 +125,14 @@ public class DrawingBehaviour : NetworkBehaviour
     {
         SetColor(MainColor.Value, MainColor.Value);
         SetPosition(P2.Value, P2.Value);
-        UpdateFill();
+        UpdateFill(FillingValue.Value);
     }
 
     private void SetPlayerOwnerAndDrawer()
     {
         GameObject playerOwnerGameObject = CurrentGameData.Players[PlayerOwnerID.Value];
-        LocalPlayerDrawer = playerOwnerGameObject.GetComponent<RectDrawer>();
+        PlayerOwnerDrawer = playerOwnerGameObject.GetComponent<RectDrawer>();
+        PlayerOwnerDrawer.CurrentDisplayDrawing = this;
         PlayerOwner = playerOwnerGameObject.GetComponent<PlayerData>();
     }
 
@@ -138,6 +146,7 @@ public class DrawingBehaviour : NetworkBehaviour
         SetPlayerOwnerAndDrawer();
         FillRenderer = FillImage.GetComponent<SpriteRenderer>();
         MarkerRenderer = MarkerImage.GetComponent<SpriteRenderer>();
+
         UpdateDrawing();
     }
 
@@ -159,6 +168,11 @@ public class DrawingBehaviour : NetworkBehaviour
         {
             SetColor(MainColor.Value, MainColor.Value);
         }
+
+        //check if started filling and still count for current drawing for inkbar
+        if (DoFilling.Value && PlayerOwnerDrawer.CurrentDisplayDrawing != null && PlayerOwnerDrawer.CurrentDisplayDrawing.ID == this.ID)
+            //remove from being currentdrawing for drawer
+            PlayerOwnerDrawer.CurrentDisplayDrawing = null;
 
         //check if drawing is done (only server can check)
         if (IsServer)
@@ -200,11 +214,17 @@ public class DrawingBehaviour : NetworkBehaviour
                 float newFillingValue = FillingValue.Value + SpeedFill.Value * Time.deltaTime / (Draw.localScale.x * Draw.localScale.y);
 
                 FillingValue.Value = Mathf.Min(newFillingValue, 1f);
-                UpdateFill();
+                UpdateFill(FillingValue.Value);
             }
         } else
         {
-            UpdateFill();
+            if (DoFilling.Value && LocalFillingValue < 1f)
+            {
+                float newLocalFillingValue = LocalFillingValue + SpeedFill.Value * Time.deltaTime / (Draw.localScale.x * Draw.localScale.y);
+
+                LocalFillingValue = Mathf.Min(newLocalFillingValue, 1f);
+                UpdateFill(newLocalFillingValue);
+            }
         }
 
     }

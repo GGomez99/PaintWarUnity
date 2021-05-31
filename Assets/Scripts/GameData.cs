@@ -13,7 +13,7 @@ public class GameData : NetworkBehaviour
     public NetworkDictionary<string, int> Scores = new NetworkDictionary<string, int>();
     public NetworkList<GameObject> Players = new NetworkList<GameObject>();
     public GameObject LocalPlayer;
-    public int LastDrawingLayerOrder = 0;
+    public int LastDrawingLayerOrder = 1;
     public NetworkVariableBool GameStarted = new NetworkVariableBool(false);
     public NetworkVariableBool GameEnded = new NetworkVariableBool(false);
     public NetworkVariableInt GameTime = new NetworkVariableInt(0);
@@ -57,6 +57,7 @@ public class GameData : NetworkBehaviour
     {
         LocalPlayer = player;
         InkDisplay.LocalPlayer = player.GetComponent<PlayerData>();
+        InkDisplay.LocalDrawer = player.GetComponent<RectDrawer>();
         InkDisplay.UpdateColor();
     }
 

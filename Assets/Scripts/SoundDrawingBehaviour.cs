@@ -19,6 +19,9 @@ public class SoundDrawingBehaviour : MonoBehaviour
     public void SetGameOptions(GameOptions newOptions)
     {
         currentOptions = newOptions;
+        Vector3 pos = gameObject.transform.position;
+        pos.z = -10;
+        gameObject.transform.position = pos;
     }
 
     // Update is called once per frame

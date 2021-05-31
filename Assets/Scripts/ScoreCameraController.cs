@@ -12,6 +12,7 @@ public class ScoreCameraController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         if (CurrentGameData.MaxCanvasY >= CurrentGameData.MaxCanvasX)
         {
             ScoreCamText.width = MaxTextResolution * CurrentGameData.MaxCanvasX / CurrentGameData.MaxCanvasY;
@@ -24,5 +25,15 @@ public class ScoreCameraController : MonoBehaviour
         }
 
         ScoreCamera.orthographicSize = CurrentGameData.MaxCanvasY;
+    }
+
+    private void Update()
+    {
+        if (ScoreCamera.transform.position.z != -CurrentGameData.LastDrawingLayerOrder)
+        {
+            Vector3 pos = ScoreCamera.transform.position;
+            pos.z = -CurrentGameData.LastDrawingLayerOrder;
+            ScoreCamera.transform.position = pos;
+        }
     }
 }

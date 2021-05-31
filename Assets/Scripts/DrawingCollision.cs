@@ -14,16 +14,6 @@ public class DrawingCollision : MonoBehaviour
         DoCollide = true;
     }
 
-    private void OnMouseDown()
-    {
-        GameObject localPlayer = CurrentDrawing.CurrentGameData.LocalPlayer;
-
-        if (CurrentDrawing.MainColor.Value.Equals(localPlayer.GetComponent<PlayerData>().TeamColor.Value))
-        {
-            localPlayer.GetComponent<RectDrawer>().GenerateDrawing();
-        }
-    }
-
     void OnCollisionEnter2D(Collision2D coll)
     {
         DrawingCollision otherDrawingCollision = coll.collider.gameObject.GetComponent<DrawingCollision>();

@@ -9,6 +9,7 @@ public class CameraMovements : MonoBehaviour
     public float cameraMoveZone = 0.1f;
     public Camera movingCamera;
     public GameData CurrentGameData;
+    public Transform ListenerTrans;
     public float border = 0.1f;
     public bool doMove = true;
 
@@ -52,6 +53,15 @@ public class CameraMovements : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //moving camera since drawings keep getting on top of each other
+        if (movingCamera.transform.position.z != -CurrentGameData.LastDrawingLayerOrder)
+        {
+            Vector3 pos = movingCamera.transform.position;
+            pos.z = -CurrentGameData.LastDrawingLayerOrder;
+            movingCamera.transform.position = pos;
+            ListenerTrans.position = new Vector3(ListenerTrans.position.x, ListenerTrans.position.y, -10);
+        }
+
         Vector3 mousePt = Input.mousePosition;
 
         float moveY = 0;

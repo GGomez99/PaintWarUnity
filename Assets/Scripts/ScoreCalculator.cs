@@ -25,8 +25,8 @@ public class ScoreCalculator : NetworkBehaviour
             InvokeRepeating("getScore", 1f, 5f);
         } else if (IsClient)
         {
-            CurrentGameData.Scores.OnDictionaryChanged += DebugScore;
-            InvokeRepeating("DisplayScore", 1f, 2f);
+            //CurrentGameData.Scores.OnDictionaryChanged += DebugScore;
+            //InvokeRepeating("DisplayScore", 1f, 2f);
         }
     }
 
