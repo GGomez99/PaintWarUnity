@@ -12,23 +12,23 @@ public class RectDrawer : NetworkBehaviour
     public GameObject CanvasDrawings;
     public PlayerData DrawerPlayer;
     public GameData CurrentGameData;
-    public DrawingBehaviour CurrentDisplayDrawing;
-    private int CurrentDrawingID = -1;
+    public ulong CurrentDrawingID = 0;
+    private bool waitingForDrawID = false;
 
     //used by server
-    private int drawingNextID = 0;
-    private Dictionary<int, DrawingBehaviour> Drawings = new Dictionary<int, DrawingBehaviour>();
+    private Dictionary<ulong, DrawingBehaviour> Drawings = new Dictionary<ulong, DrawingBehaviour>();
     
-    int CreateDrawing(Vector2 pt1, Vector2 pt2, Color32 drawColor, bool startFilling = false)
+    ulong CreateDrawing(Vector2 pt1, Vector2 pt2, Color32 drawColor, bool startFilling = false)
     {
         //create drawing
         GameObject newDrawing = Instantiate(DrawingTemplate, Vector3.zero, Quaternion.identity, CanvasDrawings.transform);
         DrawingBehaviour newDrawingBehav = newDrawing.GetComponent<DrawingBehaviour>();
-        newDrawing.GetComponent<NetworkObject>().Spawn();
+        NetworkObject newDrawNetObj = newDrawing.GetComponent<NetworkObject>();
+        newDrawNetObj.Spawn();
         newDrawingBehav.MainColor.Value = drawColor;
         newDrawingBehav.P1.Value = pt1;
         newDrawingBehav.P2.Value = pt2;
-        newDrawingBehav.ID.Value = ++drawingNextID;
+        newDrawingBehav.ID.Value = newDrawNetObj.NetworkObjectId;
         newDrawingBehav.PlayerOwnerID.Value = DrawerPlayer.PlayerID.Value;
         newDrawingBehav.SpeedFill.Value = CurrentGameData.BaseSpeedFillingPerSecond;
         if (!pt2.Equals(pt1))
@@ -43,7 +43,7 @@ public class RectDrawer : NetworkBehaviour
         return newDrawingBehav.ID.Value;
     }
 
-    void UpdateDrawingP2(int ID, Vector2 pt)
+    void UpdateDrawingP2(ulong ID, Vector2 pt)
     {
         if (Drawings.ContainsKey(ID))
         {
@@ -64,7 +64,7 @@ public class RectDrawer : NetworkBehaviour
             print("Drawing not found");
     }
 
-    void StartFillingDrawing(int ID)
+    void StartFillingDrawing(ulong ID)
     {
         if (Drawings.ContainsKey(ID))
         {
@@ -89,7 +89,7 @@ public class RectDrawer : NetworkBehaviour
     [ServerRpc]
     void CreateDrawingServerRpc(Vector2 pt, Color drawColor, ulong clientID, ServerRpcParams rpcParams = default)
     {
-        int newID = CreateDrawing(pt, pt, drawColor);
+        ulong newID = CreateDrawing(pt, pt, drawColor);
         ClientRpcParams clientRpcParams = new ClientRpcParams
         {
             Send = new ClientRpcSendParams
@@ -104,25 +104,26 @@ public class RectDrawer : NetworkBehaviour
     [ServerRpc]
     void CreateDrawingServerRpc(Vector2 pt1, Vector2 pt2, Color drawColor, ulong clientID, ServerRpcParams rpcParams = default)
     {
-        int newID = CreateDrawing(pt1, pt2, drawColor, true);
+        ulong newID = CreateDrawing(pt1, pt2, drawColor, true);
     }
 
     [ServerRpc]
-    void UpdateDrawingP2ServerRpc(int ID, Vector2 pt, ServerRpcParams rpcParams = default)
+    void UpdateDrawingP2ServerRpc(ulong ID, Vector2 pt, ServerRpcParams rpcParams = default)
     {
         UpdateDrawingP2(ID, pt);
     }
 
     [ServerRpc]
-    void StartFillingDrawingServerRpc(int ID, ServerRpcParams rpcParams = default)
+    void StartFillingDrawingServerRpc(ulong ID, ServerRpcParams rpcParams = default)
     {
         StartFillingDrawing(ID);
     }
 
     [ClientRpc]
-    void UpdateCurrentDrawingIDClientRpc(int newID, ClientRpcParams clientRpcParams = default)
+    void UpdateCurrentDrawingIDClientRpc(ulong newID, ClientRpcParams clientRpcParams = default)
     {
         CurrentDrawingID = newID;
+        waitingForDrawID = false;
     }
 
     public override void NetworkStart()
@@ -173,7 +174,7 @@ public class RectDrawer : NetworkBehaviour
         }
         else if (IsClient)
         {
-            CurrentDrawingID = -2;
+            waitingForDrawID = true;
             CreateDrawingServerRpc(pz, DrawerPlayer.TeamColor.Value, OwnerClientId);
         }
     }
@@ -183,8 +184,9 @@ public class RectDrawer : NetworkBehaviour
     {
         if (IsLocalPlayer && !CurrentGameData.GameEnded.Value)
         {
-            if (Input.GetMouseButtonDown(0) && CurrentDrawingID == -1)
+            if (Input.GetMouseButtonDown(0) && CurrentDrawingID == 0)
             {
+                //get drawing on top of all when clicking on screen
                 int layerMask = 1 << LayerMask.NameToLayer("DrawingHitboxes");
                 Collider2D colliderHit = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition), layerMask);
                 if (colliderHit != null)
@@ -192,9 +194,8 @@ public class RectDrawer : NetworkBehaviour
                     //check if clicking on UI
                     if (!EventSystem.current.IsPointerOverGameObject())
                     {
-
+                        //check correct color
                         DrawingBehaviour drawingHit = colliderHit.gameObject.GetComponent<DrawingCollision>().CurrentDrawing;
-
                         if (drawingHit.MainColor.Value.Equals(DrawerPlayer.TeamColor.Value))
                         {
                             GenerateDrawing();
@@ -204,7 +205,7 @@ public class RectDrawer : NetworkBehaviour
                 }
             } 
             
-            else if (Input.GetMouseButton(0) && CurrentDrawingID > -1)
+            else if (Input.GetMouseButton(0) && CurrentDrawingID > 0 && !waitingForDrawID)
             {
                 //update draw marker
                 Vector3 pz = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -219,14 +220,14 @@ public class RectDrawer : NetworkBehaviour
                     UpdateDrawingP2ServerRpc(CurrentDrawingID, pz);
             }
 
-            else if (Input.GetMouseButtonUp(0) && CurrentDrawingID > -1)
+            else if (Input.GetMouseButtonUp(0) && CurrentDrawingID > 0 && !waitingForDrawID)
             {
                 //start filling
                 if (IsServer)
                     StartFillingDrawing(CurrentDrawingID);
                 else if (IsClient)
                     StartFillingDrawingServerRpc(CurrentDrawingID);
-                CurrentDrawingID = -1;
+                CurrentDrawingID = 0;
             }
         }
     }

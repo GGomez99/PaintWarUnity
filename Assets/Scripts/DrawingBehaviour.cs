@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class DrawingBehaviour : NetworkBehaviour
 {
-    public NetworkVariableInt ID = new NetworkVariableInt();
+    public NetworkVariableULong ID = new NetworkVariableULong();
     public NetworkVariableInt PlayerOwnerID = new NetworkVariableInt();
     public NetworkVariableColor32 MainColor = new NetworkVariableColor32(Color.red);
     public Transform Draw;
@@ -31,7 +31,7 @@ public class DrawingBehaviour : NetworkBehaviour
 
     public NetworkVariableBool IsDrawable = new NetworkVariableBool(false);
 
-    private bool Done = false;
+    public bool Done = false;
     private SpriteRenderer FillRenderer;
     private SpriteRenderer MarkerRenderer;
     private float LocalFillingValue = 0f;
@@ -132,7 +132,6 @@ public class DrawingBehaviour : NetworkBehaviour
     {
         GameObject playerOwnerGameObject = CurrentGameData.Players[PlayerOwnerID.Value];
         PlayerOwnerDrawer = playerOwnerGameObject.GetComponent<RectDrawer>();
-        PlayerOwnerDrawer.CurrentDisplayDrawing = this;
         PlayerOwner = playerOwnerGameObject.GetComponent<PlayerData>();
     }
 
@@ -168,11 +167,6 @@ public class DrawingBehaviour : NetworkBehaviour
         {
             SetColor(MainColor.Value, MainColor.Value);
         }
-
-        //check if started filling and still count for current drawing for inkbar
-        if (DoFilling.Value && PlayerOwnerDrawer.CurrentDisplayDrawing != null && PlayerOwnerDrawer.CurrentDisplayDrawing.ID == this.ID)
-            //remove from being currentdrawing for drawer
-            PlayerOwnerDrawer.CurrentDisplayDrawing = null;
 
         //check if drawing is done (only server can check)
         if (IsServer)

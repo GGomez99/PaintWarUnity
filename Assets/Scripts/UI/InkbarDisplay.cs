@@ -1,9 +1,10 @@
+using MLAPI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InkbarDisplay : MonoBehaviour
+public class InkbarDisplay : NetworkBehaviour
 {
 
     public Slider InkSlider;
@@ -37,26 +38,34 @@ public class InkbarDisplay : MonoBehaviour
             InkSlider.value = LocalPlayer.Ink.Value;
             InkText.text = InkSlider.value + "/" + InkSlider.maxValue;
         }
-        if (LocalDrawer != null)
+
+        CostSlider.value = 0;
+        if (LocalDrawer != null && LocalDrawer.CurrentDrawingID != 0)
         {
-            DrawingBehaviour drawing = LocalDrawer.CurrentDisplayDrawing;
-            if (drawing == null)
-                CostSlider.value = 0;
-            else
+            NetworkObject drawingNetObj = GetNetworkObject(LocalDrawer.CurrentDrawingID);
+            if (drawingNetObj != null)
             {
-                CostSlider.maxValue = InkSlider.value;
-                Vector3 drawScale = LocalDrawer.CurrentDisplayDrawing.Draw.localScale;
-                float area = drawScale.x * drawScale.y;
-                int areaCost = (int) (area / LocalDrawer.CurrentGameData.InkToAreaPaintRatio);
-                CostSlider.value = areaCost;
-                if (CostSlider.value < areaCost)
+
+                DrawingBehaviour drawing = drawingNetObj.gameObject.GetComponent<DrawingBehaviour>();
+
+                if (drawing != null)
                 {
-                    SliderCost.color = new Color32(255, 180, 180, 125);
-                } else
-                {
-                    SliderCost.color = Color.white;
+                    CostSlider.maxValue = InkSlider.value;
+                    Vector3 drawScale = drawing.Draw.localScale;
+                    float area = drawScale.x * drawScale.y;
+                    int areaCost = (int)(area / LocalDrawer.CurrentGameData.InkToAreaPaintRatio);
+                    CostSlider.value = areaCost;
+                    if (CostSlider.value < areaCost)
+                    {
+                        SliderCost.color = new Color32(255, 180, 180, 255);
+                    }
+                    else
+                    {
+                        SliderCost.color = Color.white;
+                    }
                 }
             }
+            
         }
     }
 }
