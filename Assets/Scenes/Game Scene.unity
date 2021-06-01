@@ -7010,7 +7010,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef35030ac22084940a85453a41f1e7f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  calculator: {fileID: 967962118}
+  Calculator: {fileID: 967962118}
+  InkDisplay: {fileID: 1856446617}
+  OptionsManager: {fileID: 967962121}
+  PossibleColors:
+  - serializedVersion: 2
+    rgba: 4287730158
+  - serializedVersion: 2
+    rgba: 4293514386
+  - serializedVersion: 2
+    rgba: 4288268519
+  - serializedVersion: 2
+    rgba: 4288999871
+  - serializedVersion: 2
+    rgba: 4291940860
+  - serializedVersion: 2
+    rgba: 4292991150
+  - serializedVersion: 2
+    rgba: 4288210397
+  - serializedVersion: 2
+    rgba: 4293372371
+  - serializedVersion: 2
+    rgba: 4289295750
+  - serializedVersion: 2
+    rgba: 4290298272
   LocalPlayer: {fileID: 0}
   LastDrawingLayerOrder: 1
   GameStarted:
@@ -7023,7 +7046,6 @@ MonoBehaviour:
     m_InternalValue:
       serializedVersion: 2
       rgba: 0
-  InkDisplay: {fileID: 1856446617}
   MaxCanvasX:
     m_InternalValue: 0
   MaxCanvasY:
@@ -7044,6 +7066,7 @@ MonoBehaviour:
     m_InternalValue: 0
   RoundTime:
     m_InternalValue: 0
+  MaxTeamNumber: 0
 --- !u!114 &967962118
 MonoBehaviour:
   m_ObjectHideFlags: 0

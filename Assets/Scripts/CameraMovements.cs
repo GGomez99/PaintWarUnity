@@ -80,15 +80,15 @@ public class CameraMovements : MonoBehaviour
         float moveX = 0;
         if (MouseInScreenCheck() && doMove)
         {
-        if (mousePt.x < screenWidth * cameraMoveZone)
-            moveX -= cameraSensitivity;
-        else if (mousePt.x > screenWidth * (1 - cameraMoveZone))
-            moveX += cameraSensitivity;
+            if (mousePt.x < screenWidth * cameraMoveZone)
+                moveX -= cameraSensitivity;
+            else if (mousePt.x > screenWidth * (1 - cameraMoveZone))
+                moveX += cameraSensitivity;
 
-        if (mousePt.y < screenHeight * cameraMoveZone)
-            moveY -= cameraSensitivity;
-        else if (mousePt.y > screenHeight * (1 - cameraMoveZone))
-            moveY += cameraSensitivity;
+            if (mousePt.y < screenHeight * cameraMoveZone)
+                moveY -= cameraSensitivity;
+            else if (mousePt.y > screenHeight * (1 - cameraMoveZone))
+                moveY += cameraSensitivity;
         }
 
         Vector3 camPos = movingCamera.transform.position;
@@ -99,6 +99,11 @@ public class CameraMovements : MonoBehaviour
         camPos.x = Mathf.Max(Mathf.Min(camPos.x, maxWidth), -maxWidth);
 
         movingCamera.transform.position = camPos;
+
+        if (CurrentGameData.MaxCanvasY.Value == 0)
+        {
+            movingCamera.transform.position = new Vector3(0, 0, -10);
+        }
 
     }
 }

@@ -23,8 +23,12 @@ public class ScoreCameraController : MonoBehaviour
 
     void UpdateCameraBorders()
     {
-
-        if (CurrentGameData.MaxCanvasY.Value >= CurrentGameData.MaxCanvasX.Value)
+        if (CurrentGameData.MaxCanvasY.Value == 0)
+        {
+            ScoreCamText.width = MaxTextResolution;
+            ScoreCamText.height = MaxTextResolution;
+        }
+        else if (CurrentGameData.MaxCanvasY.Value >= CurrentGameData.MaxCanvasX.Value)
         {
             ScoreCamText.width = MaxTextResolution * CurrentGameData.MaxCanvasX.Value / CurrentGameData.MaxCanvasY.Value;
             ScoreCamText.height = MaxTextResolution;

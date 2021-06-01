@@ -55,9 +55,17 @@ public class MinimapCameraController : MonoBehaviour, IPointerDownHandler, IDrag
     // Start is called before the first frame update
     void UpdateMinimapBorders()
     {
-        worldToMinimapPoint = MinimapContainer.rect.height / (CurrentGameData.MaxCanvasY.Value*2);
-        MinimapContainer.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, MinimapContainer.rect.height * (CurrentGameData.MaxCanvasX.Value / CurrentGameData.MaxCanvasY.Value));
+        if (CurrentGameData.MaxCanvasY.Value == 0)
+        {
+            worldToMinimapPoint = MinimapContainer.rect.height / (15 * 2);
+            MinimapContainer.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, MinimapContainer.rect.height);
 
+        }
+        else
+        {
+            worldToMinimapPoint = MinimapContainer.rect.height / (CurrentGameData.MaxCanvasY.Value * 2);
+            MinimapContainer.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, MinimapContainer.rect.height * (CurrentGameData.MaxCanvasX.Value / CurrentGameData.MaxCanvasY.Value));
+        }
         float cameraWidthToWorld = (Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, 0, 0)) - Camera.main.ScreenToWorldPoint(Vector3.zero)).x;
         float cameraHeightToWorld = (Camera.main.ScreenToWorldPoint(new Vector3(0, Screen.height, 0)) - Camera.main.ScreenToWorldPoint(Vector3.zero)).y;
 

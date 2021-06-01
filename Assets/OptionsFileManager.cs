@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Serialization;
 using UnityEngine;
 
@@ -38,6 +37,7 @@ public class GameRoundOptions
     public float InkRegenPerTeamPixel;
     public float InkToAreaPaintRatio;
     public int RoundTime;
+    public int MaxTeamNumber;
 
     GameRoundOptions()
     {
@@ -53,7 +53,8 @@ public class GameRoundOptions
         float BaseInkRegenPerSecond = 20f,
         float InkRegenPerTeamPixel = 0.003f,
         float InkToAreaPaintRatio = 0.06f,
-        int RoundTime = 300)
+        int RoundTime = 300,
+        int MaxTeamNumber = 0)
     {
         this.MaxCanvasX = MaxCanvasX;
         this.MaxCanvasY = MaxCanvasY;
@@ -65,6 +66,7 @@ public class GameRoundOptions
         this.InkRegenPerTeamPixel = InkRegenPerTeamPixel;
         this.InkToAreaPaintRatio = InkToAreaPaintRatio;
         this.RoundTime = RoundTime;
+        this.MaxTeamNumber = MaxTeamNumber;
     }
 }
 
@@ -150,6 +152,7 @@ public class OptionsFileManager : MonoBehaviour
         CurrentGameData.InkRegenPerTeamPixel.Value = roundOptions.InkRegenPerTeamPixel;
         CurrentGameData.InkToAreaPaintRatio.Value = roundOptions.InkToAreaPaintRatio;
         CurrentGameData.RoundTime.Value = roundOptions.RoundTime;
+        CurrentGameData.MaxTeamNumber = roundOptions.MaxTeamNumber;
     }
 
     public void SaveGameRoundOptions()
@@ -164,14 +167,14 @@ public class OptionsFileManager : MonoBehaviour
             CurrentGameData.BaseInkRegenPerSecond.Value,
             CurrentGameData.InkRegenPerTeamPixel.Value,
             CurrentGameData.InkToAreaPaintRatio.Value,
-            CurrentGameData.RoundTime.Value);
+            CurrentGameData.RoundTime.Value,
+            CurrentGameData.MaxTeamNumber);
 
         SaveFile(newRoundOptions, GameRoundOptionFilename);
     }
 
     private void Awake()
     {
-        LoadGameRoundOptions();
         LoadPlayerOptions();
     }
 }

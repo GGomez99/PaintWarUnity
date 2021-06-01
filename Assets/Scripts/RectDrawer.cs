@@ -132,14 +132,10 @@ public class RectDrawer : NetworkBehaviour
         CanvasDrawings = GameObject.Find("Grid");
         CurrentGameData = GameObject.Find("GameManager").GetComponent<GameData>();
 
-        //generate team for player
+        //generate player data
         if (IsServer) {
             //add player to list (generates player ID too)
             CurrentGameData.AddPlayer(gameObject);
-
-            //generate team color
-            Color32 newTeam = CurrentGameData.AddTeam();
-            DrawerPlayer.TeamColor.Value = newTeam;
         }
 
         //mark player as local player

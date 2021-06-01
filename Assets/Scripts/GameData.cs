@@ -4,13 +4,15 @@ using MLAPI.NetworkVariable;
 using MLAPI.NetworkVariable.Collections;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameData : NetworkBehaviour
 {
-    public ScoreCalculator calculator;
+    public ScoreCalculator Calculator;
     public InkbarDisplay InkDisplay;
-    public OptionsFileManager optionsManager;
+    public OptionsFileManager OptionsManager;
+    public List<Color32> PossibleColors;
     public NetworkList<Color32> Teams = new NetworkList<Color32>();
     public NetworkDictionary<string, int> Scores = new NetworkDictionary<string, int>();
     public NetworkList<GameObject> Players = new NetworkList<GameObject>();
@@ -32,18 +34,62 @@ public class GameData : NetworkBehaviour
     public NetworkVariableFloat InkRegenPerTeamPixel = new NetworkVariableFloat();
     public NetworkVariableFloat InkToAreaPaintRatio = new NetworkVariableFloat();
     public NetworkVariableInt RoundTime = new NetworkVariableInt();
+    public int MaxTeamNumber = 0;
 
     //used by server only
     private int lastPlayerID = 0;
+    private List<Color32> TeamColorsLeft;
+    private List<int> TeamCount;
+    private bool teamsAreInit;
+
+
+    void InitialiseTeamList()
+    {
+        //load round options
+        OptionsManager.LoadGameRoundOptions();
+
+        TeamColorsLeft = new List<Color32>();
+        TeamColorsLeft = PossibleColors.OrderBy(a => Random.value).ToList();
+        if (MaxTeamNumber > 0)
+        {
+            TeamCount = new List<int>(new int[MaxTeamNumber]);
+
+            for (int i = 0; i < MaxTeamNumber; i++)
+            {
+                Color32 newTeam = AddTeam();
+                TeamCount[i] = 0;
+            }
+        }
+    }
 
     //server only but can't rpc since gameobject doesn't support serialization
     public void AddPlayer(GameObject newPlayer)
     {
         if (IsServer)
         {
+            if (!teamsAreInit)
+            {
+                InitialiseTeamList();
+                teamsAreInit = true;
+            }
+
             Players.Add(newPlayer);
 
             PlayerData data = newPlayer.GetComponent<PlayerData>();
+
+            //if no max team number, create team for each player
+            if (MaxTeamNumber == 0)
+            {
+                Color32 playerColor = AddTeam();
+                data.TeamColor.Value = playerColor;
+
+            //else assign it to the team which has the least amount of players
+            } else
+            {
+                int minTeamIndex = TeamCount.IndexOf(TeamCount.Min());
+                data.TeamColor.Value = Teams[minTeamIndex];
+                TeamCount[minTeamIndex]++;
+            }
 
             data.PlayerID.Value = lastPlayerID;
             data.InkRegen.Value = BaseInkRegenPerSecond.Value;
@@ -68,12 +114,21 @@ public class GameData : NetworkBehaviour
     {
         if (IsServer)
         {
-            Color32 newTeam = Random.ColorHSV();
-            newTeam = Color.Lerp(newTeam, Color.white, 0.5f);
-            newTeam.a = 255;
+            Color32 newTeam;
+            if (TeamColorsLeft.Count > 0)
+            {
+                int teamIndex = Random.Range(0, TeamColorsLeft.Count);
+                newTeam = TeamColorsLeft[teamIndex];
+                TeamColorsLeft.RemoveAt(teamIndex);
+            } else
+            {
+                newTeam = Random.ColorHSV();
+                newTeam = Color.Lerp(newTeam, Color.white, 0.5f);
+                newTeam.a = 255;
+            }
 
             Teams.Add(newTeam);
-            calculator.UpdateTeamListServerRpc();
+            Calculator.UpdateTeamListServerRpc();
 
             return newTeam;
         } else
@@ -88,7 +143,7 @@ public class GameData : NetworkBehaviour
     public void StartGameServerRpc()
     {
         //load round options
-        optionsManager.LoadGameRoundOptions();
+        OptionsManager.LoadGameRoundOptions();
 
         //reset team scores
         Scores.Clear();
