@@ -9,11 +9,21 @@ public class CanvasTileMapper : MonoBehaviour
     public Tile BlankTile;
     public GameData CurrentGameData;
 
-
-    void Start()
+    private void Start()
     {
-        int maxX = CurrentGameData.MaxCanvasX;
-        int maxY = CurrentGameData.MaxCanvasY;
+        CurrentGameData.MaxCanvasX.OnValueChanged += valueChangedDelegate;
+        CurrentGameData.MaxCanvasY.OnValueChanged += valueChangedDelegate;
+        UpdateTileMap();
+    }
+
+    void valueChangedDelegate(int oldV, int newV)
+    {
+        UpdateTileMap();
+    }
+    void UpdateTileMap()
+    {
+        int maxX = CurrentGameData.MaxCanvasX.Value;
+        int maxY = CurrentGameData.MaxCanvasY.Value;
 
         for (int x = -maxX; x < maxX; x++)
         {

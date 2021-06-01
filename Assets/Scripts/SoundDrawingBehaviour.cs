@@ -8,7 +8,7 @@ public class SoundDrawingBehaviour : MonoBehaviour
     public AudioSource filling;
     public AudioSource finished;
     private bool isFilling;
-    private GameOptions currentOptions;
+    private LocalOptions currentOptions;
 
     // Start is called before the first frame update
     void Start()
@@ -16,7 +16,7 @@ public class SoundDrawingBehaviour : MonoBehaviour
         isFilling = false;
     }
 
-    public void SetGameOptions(GameOptions newOptions)
+    public void SetGameOptions(LocalOptions newOptions)
     {
         currentOptions = newOptions;
         Vector3 pos = gameObject.transform.position;

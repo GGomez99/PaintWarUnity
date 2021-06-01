@@ -53,7 +53,7 @@ public class InkbarDisplay : NetworkBehaviour
                     CostSlider.maxValue = InkSlider.value;
                     Vector3 drawScale = drawing.Draw.localScale;
                     float area = drawScale.x * drawScale.y;
-                    int areaCost = (int)(area / LocalDrawer.CurrentGameData.InkToAreaPaintRatio);
+                    int areaCost = (int)(area / LocalDrawer.CurrentGameData.InkToAreaPaintRatio.Value);
                     CostSlider.value = areaCost;
                     if (CostSlider.value < areaCost)
                     {

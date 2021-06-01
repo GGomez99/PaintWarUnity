@@ -6973,6 +6973,7 @@ GameObject:
   - component: {fileID: 967962117}
   - component: {fileID: 967962116}
   - component: {fileID: 967962119}
+  - component: {fileID: 967962121}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -7023,16 +7024,26 @@ MonoBehaviour:
       serializedVersion: 2
       rgba: 0
   InkDisplay: {fileID: 1856446617}
-  MaxCanvasX: 15
-  MaxCanvasY: 15
-  MinimalDrawingLength: 1
-  BaseSpeedFillingPerSecond: 6
-  BaseInk: 150
-  InkPerTeamPixel: 0.05
-  BaseInkRegenPerSecond: 20
-  InkRegenPerTeamPixel: 0.003
-  InkToAreaPaintRatio: 0.06
-  RoundTime: 300
+  MaxCanvasX:
+    m_InternalValue: 0
+  MaxCanvasY:
+    m_InternalValue: 0
+  MinimalDrawingLength:
+    m_InternalValue: 0
+  BaseSpeedFillingPerSecond:
+    m_InternalValue: 0
+  BaseInk:
+    m_InternalValue: 0
+  InkPerTeamPixel:
+    m_InternalValue: 0
+  BaseInkRegenPerSecond:
+    m_InternalValue: 0
+  InkRegenPerTeamPixel:
+    m_InternalValue: 0
+  InkToAreaPaintRatio:
+    m_InternalValue: 0
+  RoundTime:
+    m_InternalValue: 0
 --- !u!114 &967962118
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7077,6 +7088,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &967962121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 967962115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0123452a8d60c4a488b83ea9bc69bbae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CurrentGameData: {fileID: 967962117}
+  CurrentLocalOptions: {fileID: 967962119}
+  PlayerOptionFilename: options.dat
+  GameRoundOptionFilename: roundOptions.dat
 --- !u!1 &976335867
 GameObject:
   m_ObjectHideFlags: 0
@@ -7430,6 +7457,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OptionsWindow: {fileID: 986345923}
+  fileManager: {fileID: 967962121}
 --- !u!1 &1282838328
 GameObject:
   m_ObjectHideFlags: 0

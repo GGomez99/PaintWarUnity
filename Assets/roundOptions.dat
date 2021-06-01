@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<GameRoundOptions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <MaxCanvasX>15</MaxCanvasX>
+  <MaxCanvasY>15</MaxCanvasY>
+  <MinimalDrawingLength>1</MinimalDrawingLength>
+  <BaseSpeedFillingPerSecond>6</BaseSpeedFillingPerSecond>
+  <BaseInk>150</BaseInk>
+  <InkPerTeamPixel>0.05</InkPerTeamPixel>
+  <BaseInkRegenPerSecond>20</BaseInkRegenPerSecond>
+  <InkRegenPerTeamPixel>0.003</InkRegenPerTeamPixel>
+  <InkToAreaPaintRatio>0.06</InkToAreaPaintRatio>
+  <RoundTime>300</RoundTime>
+</GameRoundOptions>

@@ -5,7 +5,7 @@ using UnityEngine;
 public class MusicController : MonoBehaviour
 {
     public GameData CurrentGame;
-    public GameOptions Options;
+    public LocalOptions Options;
     public List<AudioSource> Musics;
     public int InGameMusic;
     public int EndRound;

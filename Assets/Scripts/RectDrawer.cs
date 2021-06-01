@@ -30,7 +30,7 @@ public class RectDrawer : NetworkBehaviour
         newDrawingBehav.P2.Value = pt2;
         newDrawingBehav.ID.Value = newDrawNetObj.NetworkObjectId;
         newDrawingBehav.PlayerOwnerID.Value = DrawerPlayer.PlayerID.Value;
-        newDrawingBehav.SpeedFill.Value = CurrentGameData.BaseSpeedFillingPerSecond;
+        newDrawingBehav.SpeedFill.Value = CurrentGameData.BaseSpeedFillingPerSecond.Value;
         if (!pt2.Equals(pt1))
         {
             newDrawingBehav.IsDrawable.Value = true;
@@ -50,7 +50,7 @@ public class RectDrawer : NetworkBehaviour
             Vector3 drawScale = Drawings[ID].Draw.localScale;
             float area = drawScale.x * drawScale.y;
 
-            if (drawScale.x < CurrentGameData.MinimalDrawingLength || drawScale.y < CurrentGameData.MinimalDrawingLength || area > DrawerPlayer.Ink.Value * CurrentGameData.InkToAreaPaintRatio)
+            if (drawScale.x < CurrentGameData.MinimalDrawingLength.Value || drawScale.y < CurrentGameData.MinimalDrawingLength.Value || area > DrawerPlayer.Ink.Value * CurrentGameData.InkToAreaPaintRatio.Value)
             {
                 Drawings[ID].IsDrawable.Value = false;
             } else
@@ -74,7 +74,7 @@ public class RectDrawer : NetworkBehaviour
                 float area = drawScale.x * drawScale.y;
 
                 Drawings[ID].DoFilling.Value = true;
-                DrawerPlayer.Ink.Value -= area / CurrentGameData.InkToAreaPaintRatio;
+                DrawerPlayer.Ink.Value -= area / CurrentGameData.InkToAreaPaintRatio.Value;
             }
             else
             {
@@ -210,8 +210,8 @@ public class RectDrawer : NetworkBehaviour
                 //update draw marker
                 Vector3 pz = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 pz.z = 0;
-                pz.x = Mathf.Max(Mathf.Min(pz.x, CurrentGameData.MaxCanvasX), -CurrentGameData.MaxCanvasX);
-                pz.y = Mathf.Max(Mathf.Min(pz.y, CurrentGameData.MaxCanvasY), -CurrentGameData.MaxCanvasY);
+                pz.x = Mathf.Max(Mathf.Min(pz.x, CurrentGameData.MaxCanvasX.Value), -CurrentGameData.MaxCanvasX.Value);
+                pz.y = Mathf.Max(Mathf.Min(pz.y, CurrentGameData.MaxCanvasY.Value), -CurrentGameData.MaxCanvasY.Value);
 
 
                 if (IsServer)

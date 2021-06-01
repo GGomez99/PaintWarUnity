@@ -140,7 +140,7 @@ public class DrawingBehaviour : NetworkBehaviour
     {
         AddNetworkVariableListeners();
         CurrentGameData = GameObject.Find("GameManager").GetComponent<GameData>();
-        GameOptions currentOptions = GameObject.Find("GameManager").GetComponent<GameOptions>();
+        LocalOptions currentOptions = GameObject.Find("GameManager").GetComponent<LocalOptions>();
         SoundBehaviour.SetGameOptions(currentOptions);
         SetPlayerOwnerAndDrawer();
         FillRenderer = FillImage.GetComponent<SpriteRenderer>();

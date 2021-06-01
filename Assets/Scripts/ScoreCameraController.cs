@@ -9,22 +9,33 @@ public class ScoreCameraController : MonoBehaviour
     public RenderTexture ScoreCamText;
     public int MaxTextResolution = 1080;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
+    {
+        CurrentGameData.MaxCanvasX.OnValueChanged += valueChangedDelegate;
+        CurrentGameData.MaxCanvasY.OnValueChanged += valueChangedDelegate;
+        UpdateCameraBorders();
+    }
+
+    void valueChangedDelegate(int oldV, int newV)
+    {
+        UpdateCameraBorders();
+    }
+
+    void UpdateCameraBorders()
     {
 
-        if (CurrentGameData.MaxCanvasY >= CurrentGameData.MaxCanvasX)
+        if (CurrentGameData.MaxCanvasY.Value >= CurrentGameData.MaxCanvasX.Value)
         {
-            ScoreCamText.width = MaxTextResolution * CurrentGameData.MaxCanvasX / CurrentGameData.MaxCanvasY;
+            ScoreCamText.width = MaxTextResolution * CurrentGameData.MaxCanvasX.Value / CurrentGameData.MaxCanvasY.Value;
             ScoreCamText.height = MaxTextResolution;
         }
         else
         {
-            ScoreCamText.height = MaxTextResolution * CurrentGameData.MaxCanvasY / CurrentGameData.MaxCanvasX;
+            ScoreCamText.height = MaxTextResolution * CurrentGameData.MaxCanvasY.Value / CurrentGameData.MaxCanvasX.Value;
             ScoreCamText.width = MaxTextResolution;
         }
 
-        ScoreCamera.orthographicSize = CurrentGameData.MaxCanvasY;
+        ScoreCamera.orthographicSize = CurrentGameData.MaxCanvasY.Value;
     }
 
     private void Update()

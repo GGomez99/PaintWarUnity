@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameOptions : MonoBehaviour
+public class LocalOptions : MonoBehaviour
 {
     public int FXSound = 100;
     public int MusicSound = 100;

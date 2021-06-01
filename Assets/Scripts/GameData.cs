@@ -9,6 +9,8 @@ using UnityEngine;
 public class GameData : NetworkBehaviour
 {
     public ScoreCalculator calculator;
+    public InkbarDisplay InkDisplay;
+    public OptionsFileManager optionsManager;
     public NetworkList<Color32> Teams = new NetworkList<Color32>();
     public NetworkDictionary<string, int> Scores = new NetworkDictionary<string, int>();
     public NetworkList<GameObject> Players = new NetworkList<GameObject>();
@@ -19,18 +21,17 @@ public class GameData : NetworkBehaviour
     public NetworkVariableInt GameTime = new NetworkVariableInt(0);
     public NetworkVariableColor32 Winner = new NetworkVariableColor32();
 
-    public InkbarDisplay InkDisplay;
 
-    public int MaxCanvasX;
-    public int MaxCanvasY;
-    public float MinimalDrawingLength = 0.5f;
-    public float BaseSpeedFillingPerSecond = 6f;
-    public float BaseInk = 100f;
-    public float InkPerTeamPixel = 0.001f;
-    public float BaseInkRegenPerSecond = 17f;
-    public float InkRegenPerTeamPixel = 0.000001f;
-    public float InkToAreaPaintRatio = 0.06f;
-    public int RoundTime = 300;
+    public NetworkVariableInt MaxCanvasX = new NetworkVariableInt();
+    public NetworkVariableInt MaxCanvasY = new NetworkVariableInt();
+    public NetworkVariableFloat MinimalDrawingLength = new NetworkVariableFloat();
+    public NetworkVariableFloat BaseSpeedFillingPerSecond = new NetworkVariableFloat();
+    public NetworkVariableFloat BaseInk = new NetworkVariableFloat();
+    public NetworkVariableFloat InkPerTeamPixel = new NetworkVariableFloat();
+    public NetworkVariableFloat BaseInkRegenPerSecond = new NetworkVariableFloat();
+    public NetworkVariableFloat InkRegenPerTeamPixel = new NetworkVariableFloat();
+    public NetworkVariableFloat InkToAreaPaintRatio = new NetworkVariableFloat();
+    public NetworkVariableInt RoundTime = new NetworkVariableInt();
 
     //used by server only
     private int lastPlayerID = 0;
@@ -45,9 +46,9 @@ public class GameData : NetworkBehaviour
             PlayerData data = newPlayer.GetComponent<PlayerData>();
 
             data.PlayerID.Value = lastPlayerID;
-            data.InkRegen.Value = BaseInkRegenPerSecond;
-            data.MaxInk.Value = (int) BaseInk;
-            data.Ink.Value = BaseInk;
+            data.InkRegen.Value = BaseInkRegenPerSecond.Value;
+            data.MaxInk.Value = (int) BaseInk.Value;
+            data.Ink.Value = BaseInk.Value;
 
             lastPlayerID++;
         }
@@ -86,10 +87,10 @@ public class GameData : NetworkBehaviour
     [ServerRpc]
     public void StartGameServerRpc()
     {
-        GameStarted.Value = true;
-        GameEnded.Value = false;
+        //load round options
+        optionsManager.LoadGameRoundOptions();
 
-        //reset data
+        //reset team scores
         Scores.Clear();
 
         //reset player stats
@@ -98,9 +99,9 @@ public class GameData : NetworkBehaviour
             PlayerData data = player.GetComponent<PlayerData>();
 
             data.PlayerID.Value = lastPlayerID;
-            data.InkRegen.Value = BaseInkRegenPerSecond;
-            data.MaxInk.Value = (int)BaseInk;
-            data.Ink.Value = BaseInk;
+            data.InkRegen.Value = BaseInkRegenPerSecond.Value;
+            data.MaxInk.Value = (int)BaseInk.Value;
+            data.Ink.Value = BaseInk.Value;
         }
 
         //destroying all drawings
@@ -110,6 +111,8 @@ public class GameData : NetworkBehaviour
             Destroy(drawing);
         }
 
+        GameStarted.Value = true;
+        GameEnded.Value = false;
 
         Invoke("StartGameForRealServerRpc", 3.3f);
      
@@ -129,7 +132,7 @@ public class GameData : NetworkBehaviour
         }
 
         //setup timer
-        GameTime.Value = RoundTime;
+        GameTime.Value = RoundTime.Value;
 
         //start timer
         InvokeRepeating("TickCountdown", 0f, 1f);
@@ -173,10 +176,10 @@ public class GameData : NetworkBehaviour
         foreach (GameObject Player in Players)
         {
             PlayerData data = Player.GetComponent<PlayerData>();
-            float newMaxInk = Scores[ColorUtility.ToHtmlStringRGB(data.TeamColor.Value)] * InkPerTeamPixel + BaseInk;
+            float newMaxInk = Scores[ColorUtility.ToHtmlStringRGB(data.TeamColor.Value)] * InkPerTeamPixel.Value + BaseInk.Value;
 
             data.MaxInk.Value = (int) newMaxInk;
-            data.InkRegen.Value = Scores[ColorUtility.ToHtmlStringRGB(data.TeamColor.Value)] * InkRegenPerTeamPixel + BaseInkRegenPerSecond;
+            data.InkRegen.Value = Scores[ColorUtility.ToHtmlStringRGB(data.TeamColor.Value)] * InkRegenPerTeamPixel.Value + BaseInkRegenPerSecond.Value;
 
         }
     }

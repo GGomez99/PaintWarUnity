@@ -6,7 +6,7 @@ public class Countdown : MonoBehaviour
 {
     public Animation CountdownAnim;
     public GameData CurrentGameData;
-    public GameOptions CurrentOptions;
+    public LocalOptions CurrentOptions;
     public AudioSource CountdownFX;
 
     private bool CountStarted;

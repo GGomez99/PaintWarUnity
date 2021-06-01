@@ -19,7 +19,19 @@ public class CameraMovements : MonoBehaviour
     private float maxWidth;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
+    {
+        CurrentGameData.MaxCanvasX.OnValueChanged += valueChangedDelegate;
+        CurrentGameData.MaxCanvasY.OnValueChanged += valueChangedDelegate;
+        UpdateCameraLimits();
+    }
+
+    void valueChangedDelegate(int oldV, int newV)
+    {
+        UpdateCameraLimits();
+    }
+
+    void UpdateCameraLimits()
     {
 
 #if UNITY_EDITOR
@@ -34,8 +46,8 @@ public class CameraMovements : MonoBehaviour
         float heightToRemove = (Camera.main.ScreenToWorldPoint(new Vector3(0, screenHeight, 0)) - Camera.main.ScreenToWorldPoint(Vector3.zero)).y / 2;
 
 
-        maxHeight = CurrentGameData.MaxCanvasY - heightToRemove + border;
-        maxWidth = CurrentGameData.MaxCanvasX - widthToRemove + border;
+        maxHeight = CurrentGameData.MaxCanvasY.Value - heightToRemove + border;
+        maxWidth = CurrentGameData.MaxCanvasX.Value - widthToRemove + border;
 
     }
 
