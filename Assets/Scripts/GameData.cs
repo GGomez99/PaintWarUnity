@@ -177,13 +177,20 @@ public class GameData : NetworkBehaviour
     private void StartGameForRealServerRpc()
     {
 
-        //generate zones
+        //initialise zones and players ink regen
+        List<Color32> teamsCheck = new List<Color32>(Teams);
         foreach (GameObject player in Players)
         {
-            RectDrawer playerDrawer = player.GetComponent<RectDrawer>();
             PlayerData playerData = player.GetComponent<PlayerData>();
-            playerDrawer.GenerateTeamZone();
             playerData.StartUpdatingInk();
+
+            //generate team zone if not already done
+            if (teamsCheck.Contains(playerData.TeamColor.Value))
+            {
+                RectDrawer playerDrawer = player.GetComponent<RectDrawer>();
+                playerDrawer.GenerateTeamZone();
+                teamsCheck.Remove(playerData.TeamColor.Value);
+            }
         }
 
         //setup timer
@@ -219,6 +226,13 @@ public class GameData : NetworkBehaviour
                 ColorUtility.TryParseHtmlString("#"+team, out teamWinnerColor);
                 teamWinner = teamWinnerColor;
             }
+        }
+
+        //stop ink regen
+        foreach (GameObject player in Players)
+        {
+            PlayerData playerData = player.GetComponent<PlayerData>();
+            playerData.StopUpdatingInk();
         }
 
         Winner.Value = teamWinner;

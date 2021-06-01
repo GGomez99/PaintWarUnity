@@ -10,4 +10,5 @@
   <InkRegenPerTeamPixel>0.003</InkRegenPerTeamPixel>
   <InkToAreaPaintRatio>0.06</InkToAreaPaintRatio>
   <RoundTime>300</RoundTime>
+  <MaxTeamNumber>2</MaxTeamNumber>
 </GameRoundOptions>

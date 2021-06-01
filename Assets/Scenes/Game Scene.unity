@@ -7015,25 +7015,25 @@ MonoBehaviour:
   OptionsManager: {fileID: 967962121}
   PossibleColors:
   - serializedVersion: 2
-    rgba: 4287730158
+    rgba: 4285295840
   - serializedVersion: 2
-    rgba: 4293514386
+    rgba: 4293840488
   - serializedVersion: 2
-    rgba: 4288268519
+    rgba: 4286561250
   - serializedVersion: 2
-    rgba: 4288999871
+    rgba: 4284470408
   - serializedVersion: 2
-    rgba: 4291940860
+    rgba: 4289103055
   - serializedVersion: 2
-    rgba: 4292991150
+    rgba: 4292114775
   - serializedVersion: 2
-    rgba: 4288210397
+    rgba: 4285715170
   - serializedVersion: 2
-    rgba: 4293372371
+    rgba: 4293037767
   - serializedVersion: 2
-    rgba: 4289295750
+    rgba: 4289748087
   - serializedVersion: 2
-    rgba: 4290298272
+    rgba: 4288523633
   LocalPlayer: {fileID: 0}
   LastDrawingLayerOrder: 1
   GameStarted:
@@ -7066,7 +7066,7 @@ MonoBehaviour:
     m_InternalValue: 0
   RoundTime:
     m_InternalValue: 0
-  MaxTeamNumber: 0
+  MaxTeamNumber: 2
 --- !u!114 &967962118
 MonoBehaviour:
   m_ObjectHideFlags: 0
