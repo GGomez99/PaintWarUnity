@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class MinimapCameraController : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerEnterHandler, IPointerExitHandler
+public class MinimapCameraController : MonoBehaviour, IPointerDownHandler, IDragHandler//, IPointerEnterHandler, IPointerExitHandler
 {
 
     public RectTransform CameraMarker;
@@ -42,7 +42,7 @@ public class MinimapCameraController : MonoBehaviour, IPointerDownHandler, IDrag
         OnDrag(eventData);
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    /*public void OnPointerEnter(PointerEventData eventData)
     {
         CameraMovementsController.doMove = false;
     }
@@ -50,7 +50,7 @@ public class MinimapCameraController : MonoBehaviour, IPointerDownHandler, IDrag
     public void OnPointerExit(PointerEventData eventData)
     {
         CameraMovementsController.doMove = true;
-    }
+    }*/
 
     // Start is called before the first frame update
     void UpdateMinimapBorders()

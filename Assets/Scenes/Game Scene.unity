@@ -1017,7 +1017,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.8301887, g: 0.70732397, b: 0.20676395, a: 1}
+  m_Color: {r: 0.8784314, g: 0.78431374, b: 0.40784314, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1380,8 +1380,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8307c7c40fe83ea4ebb32efe4f01e0af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraSensitivity: 0.06
-  cameraMoveZone: 0.1
+  cameraSensitivity: 3
+  cameraMoveZone: 0.015
   movingCamera: {fileID: 519420031}
   CurrentGameData: {fileID: 967962117}
   ListenerTrans: {fileID: 1016009884}
@@ -7015,7 +7015,7 @@ MonoBehaviour:
   OptionsManager: {fileID: 967962121}
   PossibleColors:
   - serializedVersion: 2
-    rgba: 4285295840
+    rgba: 4283058830
   - serializedVersion: 2
     rgba: 4293840488
   - serializedVersion: 2
@@ -7841,7 +7841,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.8301887, g: 0.70732397, b: 0.20676395, a: 1}
+  m_Color: {r: 0.8773585, g: 0.7830739, b: 0.40888214, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -7995,7 +7995,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.8301887, g: 0.70732397, b: 0.20676395, a: 1}
+  m_Color: {r: 0.8784314, g: 0.78431374, b: 0.40784314, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

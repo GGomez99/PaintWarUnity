@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class CameraMovements : MonoBehaviour
 {
-    public float cameraSensitivity = 0.005f;
-    public float cameraMoveZone = 0.1f;
+    public float cameraSensitivity = 0.05f;
+    public float cameraMoveZone = 0.01f;
     public Camera movingCamera;
     public GameData CurrentGameData;
     public Transform ListenerTrans;
@@ -24,6 +24,8 @@ public class CameraMovements : MonoBehaviour
         CurrentGameData.MaxCanvasX.OnValueChanged += valueChangedDelegate;
         CurrentGameData.MaxCanvasY.OnValueChanged += valueChangedDelegate;
         UpdateCameraLimits();
+        //prevent cursor from escaping fullscreen (when having 2 monitors)
+        Cursor.lockState = CursorLockMode.Confined;
     }
 
     void valueChangedDelegate(int oldV, int newV)
@@ -92,8 +94,8 @@ public class CameraMovements : MonoBehaviour
         }
 
         Vector3 camPos = movingCamera.transform.position;
-        camPos.x += moveX;
-        camPos.y += moveY;
+        camPos.x += Time.deltaTime * moveX;
+        camPos.y += Time.deltaTime * moveY;
 
         camPos.y = Mathf.Max(Mathf.Min(camPos.y, maxHeight), -maxHeight);
         camPos.x = Mathf.Max(Mathf.Min(camPos.x, maxWidth), -maxWidth);
