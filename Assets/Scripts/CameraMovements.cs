@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class CameraMovements : MonoBehaviour
 {
-    public float cameraSensitivity = 0.05f;
     public float cameraMoveZone = 0.01f;
     public Camera movingCamera;
     public GameData CurrentGameData;
+    public LocalOptions options;
     public Transform ListenerTrans;
     public float border = 0.1f;
     public bool doMove = true;
@@ -83,14 +83,14 @@ public class CameraMovements : MonoBehaviour
         if (MouseInScreenCheck() && doMove)
         {
             if (mousePt.x < screenWidth * cameraMoveZone)
-                moveX -= cameraSensitivity;
+                moveX -= options.CameraSensitivity;
             else if (mousePt.x > screenWidth * (1 - cameraMoveZone))
-                moveX += cameraSensitivity;
+                moveX += options.CameraSensitivity;
 
             if (mousePt.y < screenHeight * cameraMoveZone)
-                moveY -= cameraSensitivity;
+                moveY -= options.CameraSensitivity;
             else if (mousePt.y > screenHeight * (1 - cameraMoveZone))
-                moveY += cameraSensitivity;
+                moveY += options.CameraSensitivity;
         }
 
         Vector3 camPos = movingCamera.transform.position;

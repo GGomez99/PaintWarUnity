@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <PlayerOptions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <FXSound>20</FXSound>
-  <MusicSound>20</MusicSound>
+  <FXSound>6</FXSound>
+  <MusicSound>1</MusicSound>
+  <CameraSensi>3</CameraSensi>
 </PlayerOptions>

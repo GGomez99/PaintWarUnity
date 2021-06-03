@@ -6,6 +6,7 @@ public class LocalOptions : MonoBehaviour
 {
     public int FXSound = 100;
     public int MusicSound = 100;
+    public int CameraSensitivity = 3;
 
     public void UpdateFxSound(float value)
     {
@@ -17,6 +18,11 @@ public class LocalOptions : MonoBehaviour
         MusicSound = (int) value;
     }
 
+
+    public void UpdateCameraSensi(float value)
+    {
+        CameraSensitivity = (int) value;
+    }
 
 
 }

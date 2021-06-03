@@ -10,16 +10,18 @@ public class PlayerOptions
 {
     public int FXSound;
     public int MusicSound;
+    public int CameraSensi;
 
     PlayerOptions()
     {
 
     }
 
-    public PlayerOptions(int fx = 20, int music = 20)
+    public PlayerOptions(int fx = 20, int music = 20, int sensi = 3)
     {
         FXSound = fx;
         MusicSound = music;
+        CameraSensi = sensi;
     }
 }
 
@@ -88,6 +90,9 @@ public class OptionsFileManager : MonoBehaviour
         if (File.Exists(destination)) file = File.OpenWrite(destination);
         else file = File.Create(destination);
 
+        //discard all changes
+        file.SetLength(0);
+
         XmlSerializer xs = new XmlSerializer(typeof(T));
         xs.Serialize(file, dataToSave);
         file.Close();
@@ -124,11 +129,12 @@ public class OptionsFileManager : MonoBehaviour
 
         CurrentLocalOptions.FXSound = playOptions.FXSound;
         CurrentLocalOptions.MusicSound = playOptions.MusicSound;
+        CurrentLocalOptions.CameraSensitivity = playOptions.CameraSensi;
     }
 
     public void SavePlayerOptions()
     {
-        PlayerOptions newPlayOptions = new PlayerOptions(CurrentLocalOptions.FXSound, CurrentLocalOptions.MusicSound);
+        PlayerOptions newPlayOptions = new PlayerOptions(CurrentLocalOptions.FXSound, CurrentLocalOptions.MusicSound, CurrentLocalOptions.CameraSensitivity);
         SaveFile(newPlayOptions, PlayerOptionFilename);
     }
 
